@@ -21,7 +21,11 @@ import pytest
 # ---------------------------------------------------------------------------
 
 import sys
+from pathlib import Path
 from unittest.mock import MagicMock
+
+# Add project root so fluency_api can be imported when running pytest from repo root.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # Stub out heavy / unavailable dependencies before importing the module.
 for mod in [
@@ -40,7 +44,7 @@ sys.modules["pretty_print_rich"].pretty_print_source_info = MagicMock()
 sys.modules["pretty_print_rich"].pretty_print_submit = MagicMock()
 sys.modules["pretty_print_rich"].pretty_print_table = MagicMock()
 
-from fluency_harness import (  # noqa: E402  (import after sys.modules patching)
+from fluency_api import (  # noqa: E402  (import after sys.modules patching)
     DataQuality,
     DataValidationResult,
     ETLContext,
@@ -276,7 +280,7 @@ class TestIngestSource:
     def test_source_fields_populated(self):
         t = make_table()
         df = self._make_mock_df(num_rows=50, null_count=4, empty_rows=1)
-        with patch("fluency_harness.extract_source_info") as mock_extract:
+        with patch("fluency_api.extract_source_info") as mock_extract:
             mock_extract.return_value = SourceInfo(
                 schema=[Schema(column_name="a", origin_type="source")],
                 num_of_columns=2,
@@ -293,7 +297,7 @@ class TestIngestSource:
     def test_existing_schema_not_overwritten(self):
         existing_schema = [Schema(column_name="x", origin_type="cleaned")]
         t = TableContext(table_name="t", schema=existing_schema)
-        with patch("fluency_harness.extract_source_info") as mock_extract:
+        with patch("fluency_api.extract_source_info") as mock_extract:
             mock_extract.return_value = SourceInfo(
                 schema=[Schema(column_name="a", origin_type="source")],
                 num_of_columns=1,
@@ -307,7 +311,7 @@ class TestIngestSource:
 
     def test_failed_extraction_prints_warning(self, capsys):
         t = make_table()
-        with patch("fluency_harness.extract_source_info", side_effect=RuntimeError("boom")):
+        with patch("fluency_api.extract_source_info", side_effect=RuntimeError("boom")):
             t.ingest_source(MagicMock())  # Should not raise
 
 

@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Any
 
 # Avoid circular imports by using TYPE_CHECKING
 if TYPE_CHECKING:
-    from fluency_harness import ETLContext, TableContext
+    from fluency_api import ETLContext, TableContext
 
 # Create a global console instance
 # Rich will auto-detect Jupyter notebooks and use appropriate rendering
