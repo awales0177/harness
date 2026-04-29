@@ -56,6 +56,7 @@ from fluency_api import (  # noqa: E402  (import after sys.modules patching)
     extract_source_info,
     update_schema_origin,
     _serialize,
+    _schema_column_key,
 )
 
 
@@ -68,7 +69,7 @@ def make_table(name: str = "orders", stage: str = "bronze") -> TableContext:
 
 
 def make_etl(**kwargs) -> ETLContext:
-    defaults = dict(pipeline_id="pipe-1", delivered_version="v1")
+    defaults = dict(data_product_id="pipe-1", product_delivery_version="v1")
     defaults.update(kwargs)
     return ETLContext(**defaults)
 
@@ -107,15 +108,15 @@ class TestDataValidationResult:
 class TestSchema:
     def test_valid_origin_types(self):
         for origin in ("source", "iso", "language", "regex", "metadata", "cleaned", "date"):
-            s = Schema(column_name="col", origin_type=origin)
+            s = Schema(original_column_name="col", origin_type=origin)
             assert s.origin_type == origin
 
     def test_invalid_origin_type_raises(self):
         with pytest.raises(ValueError, match="origin_type"):
-            Schema(column_name="col", origin_type="bad_type")
+            Schema(original_column_name="col", origin_type="bad_type")
 
     def test_optional_fields_default_none(self):
-        s = Schema(column_name="col", origin_type="source")
+        s = Schema(original_column_name="col", origin_type="source")
         assert s.function_created_by is None
         assert s.data_type is None
 
@@ -173,26 +174,26 @@ class TestDataQuality:
 
 class TestUpdateSchemaOrigin:
     def test_updates_existing_column(self):
-        schema = [Schema(column_name="col1", origin_type="source")]
+        schema = [Schema(original_column_name="col1", origin_type="source")]
         update_schema_origin(schema, ["col1"], "cleaned")
         assert schema[0].origin_type == "cleaned"
 
     def test_appends_new_column(self):
-        schema = [Schema(column_name="col1", origin_type="source")]
+        schema = [Schema(original_column_name="col1", origin_type="source")]
         update_schema_origin(schema, ["col2"], "language")
-        names = [s.column_name for s in schema]
+        names = [_schema_column_key(s) for s in schema]
         assert "col2" in names
-        new = next(s for s in schema if s.column_name == "col2")
+        new = next(s for s in schema if _schema_column_key(s) == "col2")
         assert new.origin_type == "language"
 
     def test_mixed_existing_and_new(self):
-        schema = [Schema(column_name="a", origin_type="source")]
+        schema = [Schema(original_column_name="a", origin_type="source")]
         update_schema_origin(schema, ["a", "b"], "iso")
         assert len(schema) == 2
         assert all(s.origin_type == "iso" for s in schema)
 
     def test_empty_column_list_no_change(self):
-        schema = [Schema(column_name="a", origin_type="source")]
+        schema = [Schema(original_column_name="a", origin_type="source")]
         update_schema_origin(schema, [], "cleaned")
         assert schema[0].origin_type == "source"
 
@@ -200,7 +201,7 @@ class TestUpdateSchemaOrigin:
         schema = []
         update_schema_origin(schema, ["new_col"], "regex")
         assert len(schema) == 1
-        assert schema[0].column_name == "new_col"
+        assert schema[0].original_column_name == "new_col"
 
 
 # ===========================================================================
@@ -234,6 +235,30 @@ class TestTableContextConstruction:
         t = TableContext(table_name="t")
         assert t.stage is None
 
+    def test_invalid_table_type_raises(self):
+        with pytest.raises(ValueError, match="table_type"):
+            TableContext(table_name="t", table_type="parquet")
+
+    def test_valid_table_types(self):
+        for tt in ("iceberg", "delta"):
+            t = TableContext(table_name="t", table_type=tt)
+            assert t.table_type == tt
+
+    def test_none_table_type_allowed(self):
+        t = TableContext(table_name="t")
+        assert t.table_type is None
+
+    def test_invalid_pipeline_name_raises(self):
+        with pytest.raises(ValueError, match="pipeline_name"):
+            TableContext(table_name="t", pipeline_name="ETL")
+
+    def test_valid_pipeline_name_MD(self):
+        t = TableContext(table_name="t", pipeline_name="MD")
+        assert t.pipeline_name == "MD"
+
+    def test_none_pipeline_name_allowed(self):
+        assert TableContext(table_name="t").pipeline_name is None
+
     def test_operation_namespaces_attached(self):
         t = make_table()
         assert hasattr(t, "read")
@@ -245,7 +270,7 @@ class TestTableContextConstruction:
         assert t.schema == []
         assert t.data_validation_results == []
         assert t.functions_ran == []
-        assert t.data_domains == []
+        assert t.data_tags == []
         assert t.sample_data == []
 
 
@@ -282,7 +307,7 @@ class TestIngestSource:
         df = self._make_mock_df(num_rows=50, null_count=4, empty_rows=1)
         with patch("fluency_api.extract_source_info") as mock_extract:
             mock_extract.return_value = SourceInfo(
-                schema=[Schema(column_name="a", origin_type="source")],
+                schema=[Schema(original_column_name="a", origin_type="source")],
                 num_of_columns=2,
                 num_of_rows=50,
                 data_quality=DataQuality(null_value_count=4, empty_row_count=1),
@@ -295,11 +320,11 @@ class TestIngestSource:
         assert t.source_data_quality.empty_row_count == 1
 
     def test_existing_schema_not_overwritten(self):
-        existing_schema = [Schema(column_name="x", origin_type="cleaned")]
+        existing_schema = [Schema(original_column_name="x", origin_type="cleaned")]
         t = TableContext(table_name="t", schema=existing_schema)
         with patch("fluency_api.extract_source_info") as mock_extract:
             mock_extract.return_value = SourceInfo(
-                schema=[Schema(column_name="a", origin_type="source")],
+                schema=[Schema(original_column_name="a", origin_type="source")],
                 num_of_columns=1,
                 num_of_rows=5,
                 data_quality=DataQuality(),
@@ -428,16 +453,16 @@ class TestUpdateFunctionEndTime:
 class TestCopySchema:
     def test_returns_deep_copy(self):
         t = make_table()
-        t.schema = [Schema(column_name="col", origin_type="source", data_type="StringType")]
+        t.schema = [Schema(original_column_name="col", origin_type="source", data_type="StringType")]
         copy = t.copy_schema()
         assert copy is not t.schema
         assert copy[0] is not t.schema[0]
-        assert copy[0].column_name == "col"
+        assert copy[0].original_column_name == "col"
         assert copy[0].origin_type == "source"
 
     def test_mutation_does_not_affect_original(self):
         t = make_table()
-        t.schema = [Schema(column_name="col", origin_type="source")]
+        t.schema = [Schema(original_column_name="col", origin_type="source")]
         copy = t.copy_schema()
         copy[0].origin_type = "cleaned"
         assert t.schema[0].origin_type == "source"
@@ -454,8 +479,8 @@ class TestCopySchema:
 class TestETLContextConstruction:
     def test_basic_construction(self):
         etl = make_etl()
-        assert etl.pipeline_id == "pipe-1"
-        assert etl.delivered_version == "v1"
+        assert etl.data_product_id == "pipe-1"
+        assert etl.product_delivery_version == "v1"
 
     def test_start_time_set_automatically(self):
         before = datetime.now()
@@ -463,18 +488,53 @@ class TestETLContextConstruction:
         after = datetime.now()
         assert before <= etl.start_time <= after
 
-    def test_invalid_delivered_version_raises(self):
-        with pytest.raises(ValueError, match="delivered_version"):
-            ETLContext(delivered_version="version1")
+    def test_invalid_product_delivery_version_raises(self):
+        with pytest.raises(ValueError, match="product_delivery_version"):
+            ETLContext(product_delivery_version="version1")
 
-    def test_valid_delivered_versions(self):
+    def test_valid_product_delivery_versions(self):
         for v in ("v1", "v10", "v999"):
-            etl = ETLContext(delivered_version=v)
-            assert etl.delivered_version == v
+            etl = ETLContext(product_delivery_version=v)
+            assert etl.product_delivery_version == v
 
-    def test_none_delivered_version_allowed(self):
+    def test_none_product_delivery_version_allowed(self):
         etl = ETLContext()
-        assert etl.delivered_version is None
+        assert etl.product_delivery_version is None
+
+    def test_invalid_periodicity_raises(self):
+        with pytest.raises(ValueError, match="periodicity"):
+            ETLContext(periodicity="Daily")
+
+    def test_valid_periodicity_values(self):
+        for p in ("Feed", "One-Time"):
+            etl = ETLContext(periodicity=p)
+            assert etl.periodicity == p
+
+    def test_none_periodicity_allowed(self):
+        assert ETLContext().periodicity is None
+
+    def test_invalid_fabric_raises(self):
+        with pytest.raises(ValueError, match="fabric"):
+            ETLContext(fabric="M")
+
+    def test_valid_fabric_L(self):
+        etl = ETLContext(fabric="L")
+        assert etl.fabric == "L"
+
+    def test_none_fabric_allowed(self):
+        assert ETLContext().fabric is None
+
+    def test_invalid_etl_platform_raises(self):
+        with pytest.raises(ValueError, match="etl_platform"):
+            ETLContext(etl_platform="airflow")
+
+    def test_valid_etl_platforms(self):
+        for p in ("kubeflow", "palantir"):
+            etl = ETLContext(etl_platform=p)
+            assert etl.etl_platform == p
+
+    def test_none_etl_platform_allowed(self):
+        assert ETLContext().etl_platform is None
 
     def test_tables_default_empty(self):
         etl = make_etl()
@@ -508,7 +568,7 @@ class TestETLContextTableManagement:
     def test_get_table_by_s3_path(self):
         etl = make_etl()
         t = make_table("orders")
-        t.s3_path = "s3://bucket/orders"
+        t.table_s3_path = "s3://bucket/orders"
         etl.add_table(t)
         assert etl.get_table_by_s3_path("s3://bucket/orders") is t
 
@@ -538,6 +598,12 @@ class TestETLContextTableManagement:
         etl = make_etl()
         result = etl.update_table_type("ghost", "iceberg")
         assert result is False
+
+    def test_update_table_type_invalid_raises(self):
+        etl = make_etl()
+        etl.add_table(make_table("orders"))
+        with pytest.raises(ValueError, match="table_type"):
+            etl.update_table_type("orders", "parquet")  # type: ignore[arg-type]
 
 
 # ===========================================================================
@@ -586,31 +652,36 @@ class TestSerialisation:
         assert "\n" in raw
 
     def test_to_dict_contains_expected_keys(self):
-        etl = make_etl(pipeline_id="pipe-42")
+        etl = make_etl(data_product_id="pipe-42")
         d = etl.to_dict()
-        assert "pipeline_id" in d
-        assert d["pipeline_id"] == "pipe-42"
+        assert "data_product_id" in d
+        assert d["data_product_id"] == "pipe-42"
 
     def test_to_dict_datetime_serialised_as_string(self):
         etl = make_etl()
         d = etl.to_dict()
         assert isinstance(d["start_time"], str)
 
-    def test_to_dict_tables_included(self):
+    def test_to_dict_tables_are_refs_only(self):
         etl = make_etl()
         etl.add_table(make_table("orders"))
         d = etl.to_dict()
         assert len(d["tables"]) == 1
-        assert d["tables"][0]["table_name"] == "orders"
+        ref = d["tables"][0]
+        assert ref == {
+            "table_name": "orders",
+            "data_product_id": etl.data_product_id,
+        }
 
-    def test_operation_namespaces_excluded(self):
+    def test_operation_namespaces_not_in_table_refs(self):
         etl = make_etl()
         etl.add_table(make_table("t"))
         d = etl.to_dict()
-        table_dict = d["tables"][0]
-        assert "read" not in table_dict or table_dict.get("read") is None
-        assert "transform" not in table_dict or table_dict.get("transform") is None
-        assert "write" not in table_dict or table_dict.get("write") is None
+        table_ref = d["tables"][0]
+        assert set(table_ref.keys()) == {"table_name", "data_product_id"}
+        assert "read" not in table_ref
+        assert "transform" not in table_ref
+        assert "write" not in table_ref
 
 
 # ===========================================================================
@@ -662,12 +733,12 @@ class TestDeliveredVersionPattern:
 
 class TestIntegration:
     def test_full_pipeline_roundtrip(self):
-        etl = ETLContext(pipeline_id="int-test", delivered_version="v3")
+        etl = ETLContext(data_product_id="int-test", product_delivery_version="v3")
 
         table = TableContext(table_name="customers", stage="silver")
         table.schema = [
-            Schema(column_name="id", origin_type="source", data_type="IntegerType"),
-            Schema(column_name="name", origin_type="source", data_type="StringType"),
+            Schema(original_column_name="id", origin_type="source", data_type="IntegerType"),
+            Schema(original_column_name="name", origin_type="source", data_type="StringType"),
         ]
 
         with table.function_tracker("clean_data", function_engines=[{"engine": "pandas"}]):
@@ -680,23 +751,29 @@ class TestIntegration:
         etl.add_table(table)
         etl.submit()
 
-        # Serialise and verify round-trip
         payload = json.loads(etl.to_json())
-        assert payload["pipeline_id"] == "int-test"
-        assert payload["delivered_version"] == "v3"
+        assert payload["data_product_id"] == "int-test"
+        assert payload["product_delivery_version"] == "v3"
         assert len(payload["tables"]) == 1
+        assert payload["tables"][0] == {
+            "table_name": "customers",
+            "data_product_id": "int-test",
+        }
 
-        t_dict = payload["tables"][0]
+        t_dict = json.loads(json.dumps(_serialize(table)))
         assert t_dict["table_name"] == "customers"
         assert t_dict["stage"] == "silver"
 
-        schema_origins = {s["column_name"]: s["origin_type"] for s in t_dict["schema"]}
+        schema_origins = {
+            (s["transformed_column_name"] or s["original_column_name"]): s["origin_type"]
+            for s in t_dict["schema"]
+        }
         assert schema_origins["id"] == "source"
         assert schema_origins["name"] == "cleaned"
 
         fn = t_dict["functions_ran"][0]
         assert fn["function_name"] == "clean_data"
-        assert fn["end_time"] is not None  # submit() sets end_time; duration is a property
+        assert fn["end_time"] is not None
 
     def test_multiple_tables_independent(self):
         etl = make_etl()

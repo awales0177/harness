@@ -1,0 +1,152 @@
+{
+  "data_product_id": "dp-orders-v1-acct",
+  "etl_job_run_id": "ejr-sample-20260428-7c4e9a2f",
+  "tables": [
+    {
+      "table_name": "orders_silver",
+      "stage": "silver",
+      "table_type": "iceberg",
+      "source_s3_path": "s3://landing/orders/bronze/",
+      "table_s3_path": "s3://curated/orders/silver/",
+      "data_quality": {
+        "null_value_count": 1200,
+        "empty_row_count": 45
+      },
+      "source_num_of_columns": 12,
+      "source_num_of_rows": 1250000,
+      "product_num_of_columns": 14,
+      "product_num_of_rows": 1248900,
+      "columns": [],
+      "data_validation_results": [
+        {
+          "rule_id": "pk_order_id",
+          "passed_or_failed": "passed",
+          "message": null
+        }
+      ],
+      "data_tags": [
+        "commerce"
+      ],
+      "sample_data": [],
+      "functions_ran": [
+        {
+          "run_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "function_name": "transform_iso",
+          "run_order": 1,
+          "function_engines": [
+            {
+              "engine": "spark",
+              "version": "3.5.0"
+            }
+          ],
+          "start_time": "2026-04-28T08:05:00",
+          "end_time": "2026-04-28T08:09:12"
+        }
+      ],
+      "etl_comments": "ISO + regex cleanup; DQ rules applied.",
+      "pipeline_name": "MD",
+      "schema": [
+        {
+          "original_column_name": "order_id",
+          "origin_type": "cleaned",
+          "transformed_column_name": "order_key",
+          "function_created_by": null,
+          "data_type": "long"
+        },
+        {
+          "original_column_name": "cust_id",
+          "origin_type": "source",
+          "transformed_column_name": "customer_id",
+          "function_created_by": null,
+          "data_type": "long"
+        },
+        {
+          "original_column_name": "country",
+          "origin_type": "iso",
+          "transformed_column_name": "country_iso",
+          "function_created_by": null,
+          "data_type": "string"
+        }
+      ],
+      "source_data_quality": {
+        "null_value_count": 5000,
+        "empty_row_count": 100
+      },
+      "data_product_id": "dp-orders-v1-acct",
+      "etl_job_run_id": "ejr-sample-20260428-7c4e9a2f"
+    },
+    {
+      "table_name": "order_line_items_silver",
+      "stage": "silver",
+      "table_type": "delta",
+      "source_s3_path": "s3://landing/order_lines/bronze/",
+      "table_s3_path": "s3://curated/order_lines/silver/",
+      "data_quality": {
+        "null_value_count": 890,
+        "empty_row_count": 12
+      },
+      "source_num_of_columns": 8,
+      "source_num_of_rows": 4100000,
+      "product_num_of_columns": 9,
+      "product_num_of_rows": 4098200,
+      "columns": [],
+      "data_validation_results": [
+        {
+          "rule_id": "fk_order_id",
+          "passed_or_failed": "passed",
+          "message": null
+        }
+      ],
+      "data_tags": [
+        "commerce"
+      ],
+      "sample_data": [],
+      "functions_ran": [
+        {
+          "run_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+          "function_name": "transform_regex",
+          "run_order": 1,
+          "function_engines": [
+            {
+              "engine": "spark",
+              "version": "3.5.0"
+            }
+          ],
+          "start_time": "2026-04-28T08:10:00",
+          "end_time": "2026-04-28T08:12:00"
+        }
+      ],
+      "etl_comments": "Join key dimensions; currency metadata enrichment.",
+      "pipeline_name": "MD",
+      "schema": [
+        {
+          "original_column_name": "line_id",
+          "origin_type": "source",
+          "transformed_column_name": "order_line_key",
+          "function_created_by": null,
+          "data_type": "long"
+        },
+        {
+          "original_column_name": "order_id",
+          "origin_type": "source",
+          "transformed_column_name": "order_key",
+          "function_created_by": null,
+          "data_type": "long"
+        },
+        {
+          "original_column_name": "sku_raw",
+          "origin_type": "regex",
+          "transformed_column_name": "sku",
+          "function_created_by": null,
+          "data_type": "string"
+        }
+      ],
+      "source_data_quality": {
+        "null_value_count": 2100,
+        "empty_row_count": 40
+      },
+      "data_product_id": "dp-orders-v1-acct",
+      "etl_job_run_id": "ejr-sample-20260428-7c4e9a2f"
+    }
+  ]
+}

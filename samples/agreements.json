@@ -1,0 +1,1030 @@
+{
+    "agreements": [
+      {
+        "id": "contract-008",
+        "name": "API Gateway",
+        "description": "Product agreement for API request/response validation",
+        "status": "active",
+        "specificationMaintainer": "API Platform Team",
+        "parentSystem": "API Management System",
+        "dataProducer": [
+          "API Gateway"
+        ],
+        "dataValidator": "API Platform Team",
+        "dataConsumer": [
+          "Client Services"
+        ],
+        "modelShortName": "TECH",
+        "contractVersion": "1.0.0",
+        "deliveredVersion": "1.0.3",
+        "deliveryFrequency": "real-time",
+        "startDate": "2024-02-10T08:45:00Z",
+        "endDate": "2024-08-31T23:59:59Z",
+        "fileFormat": "Protobuf",
+        "restricted": true,
+        "network": [
+          "intranet"
+        ],
+        "sensitivityLevel": [
+          "confidential"
+        ],
+        "location": [
+          {
+            "bucket": "us-west-2",
+            "description": "Primary AWS region for API management and gateway services"
+          }
+        ],
+        "todo": {
+          "date": "2024-04-01T09:15:00Z",
+          "items": [
+            "Implement rate limiting improvements",
+            "Add request validation middleware",
+            "Update API documentation"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "1.0.3",
+            "date": "2024-03-08T10:30:00Z",
+            "changes": [
+              "Fixed rate limiting bug",
+              "Enhanced error handling"
+            ]
+          },
+          {
+            "version": "1.0.2",
+            "date": "2024-02-25T15:20:00Z",
+            "changes": [
+              "Added request validation",
+              "Updated security headers"
+            ]
+          },
+          {
+            "version": "1.0.0",
+            "date": "2024-02-10T08:45:00Z",
+            "changes": [
+              "Initial contract release"
+            ]
+          }
+        ],
+        "lastUpdated": "2025-08-17 01:01:29",
+        "uuid": "42c9ed7b-f3a7-4297-8764-b441d5c35daf"
+      },
+      {
+        "id": "contract-001",
+        "name": "Product Data Schema",
+        "description": "Product agreement for product data",
+        "status": "active",
+        "specificationMaintainer": "Product Data Team",
+        "parentSystem": "Product Management System",
+        "dataProducer": [
+          "Product"
+        ],
+        "dataValidator": "Product Data Team",
+        "dataConsumer": [
+          "Catalog",
+          "Other"
+        ],
+        "modelShortName": "PROD",
+        "contractVersion": "1.0.0",
+        "deliveredVersion": [
+          "1.2.0",
+          "1.1.0",
+          "1.0.0"
+        ],
+        "deliveryFrequency": [
+          "Feeds",
+          "One-Time"
+        ],
+        "startDate": "2024-02-01",
+        "endDate": "unk",
+        "fileFormat": "JSON",
+        "restricted": true,
+        "network": [
+          "intranet"
+        ],
+        "location": [
+          {
+            "bucket": "s3://bucket/folder/file.json",
+            "description": "Primary configuration file"
+          },
+          {
+            "bucket": "s3://bucket/folder/file2.json",
+            "description": "Backup or override configuration file"
+          }
+        ],
+        "todo": {
+          "date": "2024-03-25T10:00:00Z",
+          "items": [
+            "Implement new product category validation rules",
+            "Update documentation for SKU format changes",
+            "Schedule review with Product Data Team"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "1.2.0",
+            "date": "2024-03-15T10:30:00Z",
+            "changes": [
+              "Added new product category fields",
+              "Updated validation rules for SKU format",
+              "new cha"
+            ]
+          },
+          {
+            "version": "1.1.0",
+            "date": "2024-02-28T14:20:00Z",
+            "changes": [
+              "Added support for product variants",
+              "Enhanced price validation"
+            ]
+          },
+          {
+            "version": "1.0.0",
+            "date": "2024-02-01T09:15:00Z",
+            "changes": [
+              "Initial contract release"
+            ]
+          }
+        ],
+        "lastUpdated": "2025-08-17 01:33:26",
+        "uuid": "db3b8710-8c52-4e21-b00d-fd3de512ff25"
+      },
+      {
+        "id": "temp_1755130484850",
+        "name": "Aaron Test",
+        "description": "Data Team agreement",
+        "status": "active",
+        "specificationMaintainer": "Customers",
+        "parentSystem": "Analytics",
+        "dataProducer": [
+          "Auth Service"
+        ],
+        "dataValidator": "Product Service",
+        "dataConsumer": [
+          "Store",
+          "Jane Smith"
+        ],
+        "modelShortName": "ASY",
+        "contractVersion": "1.0.2",
+        "deliveredVersion": [
+          "1.0.0"
+        ],
+        "deliveryFrequency": [
+          "One-Time",
+          "Feed"
+        ],
+        "startDate": "2025-08-14",
+        "endDate": "2025-08-15",
+        "fileFormat": "JSON",
+        "restricted": true,
+        "network": [
+          "intranet"
+        ],
+        "sensitivityLevel": [
+          "confidential"
+        ],
+        "location": [
+          {
+            "bucket": "a",
+            "description": "a"
+          },
+          {
+            "bucket": "s",
+            "description": "ss"
+          },
+          {
+            "bucket": "aaa",
+            "description": "aaaa"
+          }
+        ],
+        "todo": {
+          "date": "2025-08-14T00:14:44.850Z",
+          "items": [
+            "Initial setup tasks"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "date": "2025-08-14",
+            "changes": [
+              "Initial agreement creation"
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "date": "2025-08-14T01:40:19.347Z",
+            "changes": [
+              "new version"
+            ]
+          }
+        ],
+        "lastUpdated": "2025-08-17 01:43:16",
+        "nextUpdate": "",
+        "uuid": "7e288e42-5060-41dc-8466-e95858702c57"
+      },
+      {
+        "id": "contract-004",
+        "name": "Inventory Sync",
+        "description": "Product agreement for real-time inventory synchronization",
+        "status": "in_review",
+        "specificationMaintainer": "Inventory Management Team",
+        "parentSystem": "Inventory Management System",
+        "dataProducer": [
+          "Inventory Service"
+        ],
+        "dataValidator": "Inventory Management Team",
+        "dataConsumer": [
+          "Catalog Service"
+        ],
+        "modelShortName": "PROD",
+        "contractVersion": "1.0.1",
+        "deliveredVersion": "1.0.0",
+        "deliveryFrequency": "5min",
+        "startDate": "2024-03-12T14:20:00Z",
+        "endDate": "2024-06-30T23:59:59Z",
+        "fileFormat": "JSON",
+        "restricted": false,
+        "network": [
+          "internet"
+        ],
+        "sensitivityLevel": [
+          "public"
+        ],
+        "location": [
+          {
+            "bucket": "s3://bucket/folder/file.json",
+            "description": "Primary configuration file"
+          },
+          {
+            "bucket": "s3://bucket/folder/file2.json",
+            "description": "Backup or override configuration file"
+          }
+        ],
+        "todo": {
+          "date": "2024-03-28T11:15:00Z",
+          "items": [
+            "Implement real-time sync monitoring",
+            "Add error handling for network issues",
+            "Create backup sync mechanism"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "date": "2024-03-12T14:20:00Z",
+            "changes": [
+              "Initial contract release",
+              "Basic inventory sync implementation"
+            ]
+          }
+        ],
+        "lastUpdated": "2025-08-17 22:14:42",
+        "uuid": "e9f02cf9-1cda-4a44-aa4b-62ee0f8a73b5"
+      },
+      {
+        "id": "contract-005",
+        "name": "User Authentication",
+        "description": "Product agreement for user authentication and authorization",
+        "status": "in_progress",
+        "specificationMaintainer": "Security Team",
+        "parentSystem": "Identity Management System",
+        "dataProducer": [
+          "Auth Service"
+        ],
+        "dataValidator": "Security Team",
+        "dataConsumer": [
+          "User Service"
+        ],
+        "modelShortName": "CUST",
+        "contractVersion": "2.0.0",
+        "deliveredVersion": "2.3.0",
+        "deliveryFrequency": "real-time",
+        "startDate": "2024-02-10T09:30:00Z",
+        "endDate": null,
+        "fileFormat": "Protobuf",
+        "restricted": true,
+        "network": [
+          "intranet"
+        ],
+        "sensitivityLevel": [
+          "highly_sensitive"
+        ],
+        "location": [
+          {
+            "bucket": "s3://bucket/folder/file.json",
+            "description": "Primary configuration file"
+          },
+          {
+            "bucket": "s3://bucket/folder/file2.json",
+            "description": "Backup or override configuration file"
+          }
+        ],
+        "todo": {
+          "date": "2024-03-29T13:45:00Z",
+          "items": [
+            "Implement biometric authentication",
+            "Update session timeout policies",
+            "Add support for hardware security keys"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "2.3.0",
+            "date": "2024-03-11T11:30:00Z",
+            "changes": [
+              "Added MFA support",
+              "Enhanced session management"
+            ]
+          },
+          {
+            "version": "2.2.0",
+            "date": "2024-02-25T13:45:00Z",
+            "changes": [
+              "Added OAuth2 support",
+              "Updated password policies"
+            ]
+          },
+          {
+            "version": "2.1.0",
+            "date": "2024-02-10T09:30:00Z",
+            "changes": [
+              "Added social role change support",
+              "Enhanced security logging"
+            ]
+          }
+        ],
+        "lastUpdated": "2025-08-17 22:17:47",
+        "uuid": "524664ae-8a83-4c0a-b98d-5e7659b0fcc7"
+      },
+      {
+        "id": "contract-006",
+        "name": "Shipping Integration",
+        "description": "Product agreement for shipping carrier integration",
+        "status": "in_progress",
+        "specificationMaintainer": "Shipping Operations Team",
+        "parentSystem": "Shipping Management System",
+        "dataProducer": [
+          "Shipping Service"
+        ],
+        "dataValidator": "Shipping Operations Team",
+        "dataConsumer": [
+          "Fulfillment Service"
+        ],
+        "modelShortName": "ORD",
+        "contractVersion": "1.5.0",
+        "deliveredVersion": "1.5.2",
+        "deliveryFrequency": "15min",
+        "startDate": "2024-02-15T10:15:00Z",
+        "endDate": "2024-09-30T23:59:59Z",
+        "fileFormat": "Avro",
+        "restricted": false,
+        "network": [
+          "internet"
+        ],
+        "sensitivityLevel": [
+          "public"
+        ],
+        "location": [
+          {
+            "bucket": "s3://bucket/folder/file.json",
+            "description": "Primary configuration file"
+          },
+          {
+            "bucket": "s3://bucket/folder/file2.json",
+            "description": "Backup or override configuration file"
+          }
+        ],
+        "todo": {
+          "date": "2024-03-30T15:30:00Z",
+          "items": [
+            "Add new carrier API integration",
+            "Update rate calculation logic",
+            "Implement tracking webhook"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "1.5.2",
+            "date": "2024-03-10T16:45:00Z",
+            "changes": [
+              "Fixed rate calculation bug",
+              "Added new carrier integration"
+            ]
+          },
+          {
+            "version": "1.5.0",
+            "date": "2024-02-28T14:30:00Z",
+            "changes": [
+              "Added support for international shipping",
+              "Enhanced tracking updates"
+            ]
+          },
+          {
+            "version": "1.0.0",
+            "date": "2024-02-15T10:15:00Z",
+            "changes": [
+              "Initial contract release"
+            ]
+          }
+        ],
+        "lastUpdated": "2025-08-17 22:19:11",
+        "uuid": "adc4e1a9-1b57-42e9-9980-9efe0c34565c"
+      },
+      {
+        "id": "contract-002",
+        "name": "Order Processing",
+        "description": "Product agreement for order processing",
+        "status": "active",
+        "specificationMaintainer": "Order Management Team",
+        "parentSystem": "Order Management System",
+        "dataProducer": [
+          "Order Service"
+        ],
+        "dataValidator": "Order Processing Team",
+        "dataConsumer": [
+          "Fulfillment Service",
+          "Other Service",
+          "Other Service 3"
+        ],
+        "modelShortName": "ORD",
+        "contractVersion": "2.0.0",
+        "deliveredVersion": "2.0.1",
+        "deliveryFrequency": "real-time",
+        "startDate": "2024-02-15T08:45:00Z",
+        "endDate": "2024-12-31T23:59:59Z",
+        "fileFormat": "Avro",
+        "restricted": true,
+        "network": [
+          "intranet"
+        ],
+        "sensitivityLevel": [
+          "confidential"
+        ],
+        "location": [
+          {
+            "bucket": "s3://bucket/folder/file.json",
+            "description": "Primary configuration file"
+          },
+          {
+            "bucket": "s3://bucket/folder/file2.json",
+            "description": "Backup or override configuration file"
+          }
+        ],
+        "todo": {
+          "date": "2024-03-26T14:30:00Z",
+          "items": [
+            "Fix remaining order status transition issues",
+            "Add validation for international shipping addresses",
+            "Update test cases for new payment methods"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "2.0.1",
+            "date": "2024-03-14T15:45:00Z",
+            "changes": [
+              "Fixed order status transition bug",
+              "Added validation for shipping address"
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "date": "2024-03-01T11:30:00Z",
+            "changes": [
+              "Major overhaul of order processing flow",
+              "Added support for multiple payment methods"
+            ]
+          },
+          {
+            "version": "1.0.0",
+            "date": "2024-02-15T08:45:00Z",
+            "changes": [
+              "Initial contract release"
+            ]
+          }
+        ],
+        "lastUpdated": "2025-08-17 22:22:18",
+        "uuid": "40e21c56-9091-47cb-8ae9-300bf336c651"
+      },
+      {
+        "id": "contract-003",
+        "name": "Payment Processing",
+        "description": "Product agreement for payment data validation and security",
+        "status": "active",
+        "specificationMaintainer": "Payment Security Team",
+        "parentSystem": "Payment Processing System",
+        "dataProducer": [
+          "Payment Service"
+        ],
+        "dataValidator": "Payment Security Team",
+        "dataConsumer": [
+          "Order Service",
+          "User Service"
+        ],
+        "modelShortName": "FIN",
+        "contractVersion": "3.0.0",
+        "deliveredVersion": "3.1.0",
+        "deliveryFrequency": "real-time",
+        "startDate": "2024-02-01T10:30:00Z",
+        "endDate": null,
+        "fileFormat": "Protobuf",
+        "restricted": true,
+        "network": [
+          "internet",
+          "intranet"
+        ],
+        "sensitivityLevel": [
+          "highly_sensitive"
+        ],
+        "location": [
+          {
+            "bucket": "us-west-2",
+            "description": "Primary AWS region for payment processing and security"
+          }
+        ],
+        "todo": {
+          "date": "2024-03-27T09:00:00Z",
+          "items": [
+            "Integrate new payment provider API",
+            "Update fraud detection rules",
+            "Schedule security audit review"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "3.1.0",
+            "date": "2024-03-13T09:15:00Z",
+            "changes": [
+              "Added support for new payment providers",
+              "Enhanced fraud detection rules",
+              "hi",
+              "hi2"
+            ]
+          },
+          {
+            "version": "3.0.0",
+            "date": "2024-02-28T16:20:00Z",
+            "changes": [
+              "Complete security audit implementation",
+              "Updated encryption standards"
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "date": "2024-02-01T10:30:00Z",
+            "changes": [
+              "Major security enhancements",
+              "Added new payment methods"
+            ]
+          }
+        ],
+        "lastUpdated": "2025-08-20 22:24:38",
+        "uuid": "8f242415-74d1-4f81-b360-8315f1f188eb"
+      },
+      {
+        "id": "contract-009",
+        "name": "Order Analytics",
+        "description": "Product agreement for order data analytics and reporting",
+        "status": "in_progress",
+        "dataProducer": [
+          "Customers",
+          "cust2"
+        ],
+        "consumer": "Business Intelligence",
+        "modelShortName": "ORD",
+        "contractVersion": "1.0.0",
+        "deliveredVersion": "1.0.3",
+        "deliveryFrequency": "1hour",
+        "validator": "Data Analytics Team",
+        "startDate": "2024-03-01T09:00:00Z",
+        "endDate": null,
+        "fileFormat": "Parquet",
+        "restricted": true,
+        "network": [
+          "intranet",
+          "internet",
+          "internet"
+        ],
+        "sensitivityLevel": [
+          "confidential",
+          "public"
+        ],
+        "location": [
+          {
+            "bucket": "s3://bucket/folder/file.json",
+            "description": "Primary configuration file"
+          },
+          {
+            "bucket": "s3://bucket/folder/file2.json",
+            "description": "backup"
+          },
+          {
+            "bucket": "s3://bucket/folder/file3.json",
+            "description": "backup 2"
+          }
+        ],
+        "todo": {
+          "date": "2024-04-02T14:00:00Z",
+          "items": [
+            "Implement revenue analytics dashboard",
+            "Add customer segmentation features",
+            "Update reporting templates"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "1.0.3",
+            "date": "2024-03-20T11:30:00Z",
+            "changes": [
+              "Added revenue analytics",
+              "Enhanced reporting capabilities"
+            ]
+          },
+          {
+            "version": "1.0.2",
+            "date": "2024-03-15T14:20:00Z",
+            "changes": [
+              "Added customer segmentation",
+              "Improved data aggregation"
+            ]
+          },
+          {
+            "version": "1.0.0",
+            "date": "2024-03-01T09:00:00Z",
+            "changes": [
+              "Initial contract release",
+              "Basic order analytics implementation"
+            ]
+          }
+        ],
+        "lastUpdated": "2025-08-20 22:45:51",
+        "dataConsumer": [
+          "goog",
+          "goog2",
+          "goog3",
+          "goog4",
+          "goog5"
+        ],
+        "uuid": "df315085-4fce-4c20-85f5-6a36a8dec644"
+      },
+      {
+        "id": "agreement-001",
+        "name": "hi",
+        "description": "hi",
+        "status": "draft",
+        "owner": [
+          "Customer Portal"
+        ],
+        "specificationMaintainer": "",
+        "parentSystem": "",
+        "dataProducer": [
+          ""
+        ],
+        "dataValidator": "",
+        "dataConsumer": [],
+        "modelShortName": "",
+        "contractVersion": "1.0.0",
+        "deliveredVersion": [
+          "1.0.0"
+        ],
+        "deliveryFrequency": [
+          "One-Time"
+        ],
+        "startDate": "2025-12-11",
+        "endDate": "",
+        "fileFormat": "JSON",
+        "restricted": false,
+        "network": [
+          "internet"
+        ],
+        "sensitivityLevel": [
+          "public"
+        ],
+        "location": [
+          {
+            "bucket": "",
+            "description": ""
+          }
+        ],
+        "todo": {
+          "date": "2025-12-11T02:59:33.907Z",
+          "items": [
+            "Initial setup tasks"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "date": "2025-12-11",
+            "changes": [
+              "Initial agreement creation"
+            ]
+          }
+        ],
+        "lastUpdated": "2025-12-10 21:59:45",
+        "versionHistory": [
+          {
+            "version": "1.0.0",
+            "timestamp": "2025-12-11T02:59:45.693Z",
+            "updatedBy": "user",
+            "changeDescription": "Agreement created",
+            "fieldChanges": [
+              {
+                "field": "owner",
+                "oldValue": "empty",
+                "newValue": "Customer Portal"
+              },
+              {
+                "field": "name",
+                "oldValue": "empty",
+                "newValue": "hi"
+              },
+              {
+                "field": "description",
+                "oldValue": "empty",
+                "newValue": "hi"
+              },
+              {
+                "field": "status",
+                "oldValue": "empty",
+                "newValue": "draft"
+              },
+              {
+                "field": "specificationMaintainer",
+                "oldValue": "empty",
+                "newValue": "empty"
+              },
+              {
+                "field": "parentSystem",
+                "oldValue": "empty",
+                "newValue": "empty"
+              },
+              {
+                "field": "dataProducer",
+                "oldValue": "empty",
+                "newValue": "[]"
+              },
+              {
+                "field": "dataValidator",
+                "oldValue": "empty",
+                "newValue": "empty"
+              },
+              {
+                "field": "dataConsumer",
+                "oldValue": "empty",
+                "newValue": "empty array"
+              },
+              {
+                "field": "modelShortName",
+                "oldValue": "empty",
+                "newValue": "empty"
+              },
+              {
+                "field": "contractVersion",
+                "oldValue": "empty",
+                "newValue": "1.0.0"
+              },
+              {
+                "field": "deliveredVersion",
+                "oldValue": "empty",
+                "newValue": "[1.0.0]"
+              },
+              {
+                "field": "deliveryFrequency",
+                "oldValue": "empty",
+                "newValue": "[One-Time]"
+              },
+              {
+                "field": "startDate",
+                "oldValue": "empty",
+                "newValue": "2025-12-11"
+              },
+              {
+                "field": "endDate",
+                "oldValue": "empty",
+                "newValue": "empty"
+              },
+              {
+                "field": "fileFormat",
+                "oldValue": "empty",
+                "newValue": "JSON"
+              },
+              {
+                "field": "restricted",
+                "oldValue": "empty",
+                "newValue": "false"
+              },
+              {
+                "field": "network",
+                "oldValue": "empty",
+                "newValue": "[internet]"
+              },
+              {
+                "field": "sensitivityLevel",
+                "oldValue": "empty",
+                "newValue": "[public]"
+              },
+              {
+                "field": "location",
+                "oldValue": "empty",
+                "newValue": "[[object Object]]"
+              },
+              {
+                "field": "todo",
+                "oldValue": "empty",
+                "newValue": "{date, items}"
+              }
+            ]
+          }
+        ],
+        "uuid": "6f5a5a54-203d-4ed3-b715-59d911923dec"
+      },
+      {
+        "id": "contract-007",
+        "name": "Content Management",
+        "description": "Product agreement for content validation and publishing",
+        "status": "in_progress",
+        "specificationMaintainer": "Content Management Team",
+        "parentSystem": "Content Management System",
+        "dataProducer": [
+          "Catalog"
+        ],
+        "dataValidator": "Content Management Team",
+        "dataConsumer": [
+          "Frontend Service"
+        ],
+        "modelShortName": "TECH",
+        "contractVersion": "2.0.0",
+        "deliveredVersion": "2.1.0",
+        "deliveryFrequency": "1hour",
+        "startDate": "2024-02-01T09:30:00Z",
+        "endDate": null,
+        "fileFormat": "ndjson",
+        "restricted": true,
+        "network": [
+          "internet"
+        ],
+        "sensitivityLevel": [
+          "public"
+        ],
+        "location": [
+          {
+            "bucket": "us-east-1",
+            "description": "Primary AWS region for content management data"
+          }
+        ],
+        "todo": {
+          "date": "2024-03-31T10:00:00Z",
+          "items": [
+            "Implement rich text editor features",
+            "Add media optimization pipeline",
+            "Update content validation rules"
+          ]
+        },
+        "changelog": [
+          {
+            "version": "2.1.0",
+            "date": "2024-03-09T13:15:00Z",
+            "changes": [
+              "Added rich text editor support",
+              "Enhanced media handling"
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "date": "2024-02-20T11:45:00Z",
+            "changes": [
+              "Major content model update",
+              "Added version control"
+            ]
+          },
+          {
+            "version": "1.0.0",
+            "date": "2024-02-01T09:30:00Z",
+            "changes": [
+              "Initial contract release"
+            ]
+          }
+        ],
+        "lastUpdated": "2026-04-19 01:06:31",
+        "dataPolicies": [
+          "retention_policy_001",
+          "access_policy_001",
+          "quality_policy_001",
+          "compliance_policy_001"
+        ],
+        "owner": [
+          "Analytics Dashboard"
+        ],
+        "versionHistory": [
+          {
+            "version": "2.0.0",
+            "timestamp": "2025-11-12T22:50:35.844Z",
+            "updatedBy": "user",
+            "changeDescription": "Updated fileFormat",
+            "fieldChanges": [
+              {
+                "field": "fileFormat",
+                "oldValue": "JSON",
+                "newValue": "ndjson"
+              }
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "timestamp": "2025-11-13T02:18:13.490Z",
+            "updatedBy": "user",
+            "changeDescription": "Updated fileFormat",
+            "fieldChanges": [
+              {
+                "field": "fileFormat",
+                "oldValue": "ndjson",
+                "newValue": "json"
+              }
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "timestamp": "2025-11-13T02:19:33.308Z",
+            "updatedBy": "user",
+            "changeDescription": "Updated fileFormat",
+            "fieldChanges": [
+              {
+                "field": "fileFormat",
+                "oldValue": "json",
+                "newValue": "ndjson"
+              }
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "timestamp": "2025-11-13T02:19:58.342Z",
+            "updatedBy": "user",
+            "changeDescription": "Updated name",
+            "fieldChanges": [
+              {
+                "field": "name",
+                "oldValue": "Content Management",
+                "newValue": "Content Managemen"
+              }
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "timestamp": "2025-11-13T02:20:15.797Z",
+            "updatedBy": "user",
+            "changeDescription": "Updated owner",
+            "fieldChanges": [
+              {
+                "field": "owner",
+                "oldValue": "Customer Porta",
+                "newValue": "Analytics Dashboard"
+              }
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "timestamp": "2025-12-11T03:13:56.021Z",
+            "updatedBy": "user",
+            "changeDescription": "Updated restricted",
+            "fieldChanges": [
+              {
+                "field": "restricted",
+                "oldValue": "false",
+                "newValue": "true"
+              }
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "timestamp": "2026-04-19T03:36:05.939Z",
+            "updatedBy": "user",
+            "changeDescription": "Updated dataProducer",
+            "fieldChanges": [
+              {
+                "field": "dataProducer",
+                "oldValue": "[CMS Service]",
+                "newValue": "[Catalog]"
+              }
+            ]
+          },
+          {
+            "version": "2.0.0",
+            "timestamp": "2026-04-19T05:06:31.611Z",
+            "updatedBy": "user",
+            "changeDescription": "Updated name",
+            "fieldChanges": [
+              {
+                "field": "name",
+                "oldValue": "Content Managemen",
+                "newValue": "Content Management"
+              }
+            ]
+          }
+        ],
+        "uuid": "c84bb883-9a9e-4d5d-8dce-f0fbf07e432c"
+      }
+    ]
+  }

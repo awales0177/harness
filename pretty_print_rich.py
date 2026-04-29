@@ -34,8 +34,9 @@ def pretty_print_etl_context_init(context: Any) -> None:
     left_table.add_row("Pipeline ID", context.pipeline_id or "None")
     left_table.add_row("Source Dataset IDs", ", ".join(context.source_dataset_ids) if context.source_dataset_ids else "None")
     left_table.add_row("Periodicity", context.periodicity or "None")
+    left_table.add_row("Fabric", context.fabric or "None")
     left_table.add_row("Expected Delivery", context.expected_delivery or "None")
-    left_table.add_row("Delivered Version", context.delivered_version or "None")
+    left_table.add_row("Product Delivery Version", context.product_delivery_version or "None")
     
     # Build right table (Organization & Product)
     right_table = Table(show_header=False, box=None, padding=(0, 1))
@@ -90,15 +91,17 @@ def pretty_print_source_info(table: Any) -> None:
     # Build schema table
     if table.schema:
         schema_table = Table(show_header=True, box=box.SIMPLE)
-        schema_table.add_column("Column Name", style="cyan")
+        schema_table.add_column("Original name", style="cyan")
+        schema_table.add_column("Transformed name", style="cyan")
         schema_table.add_column("Origin Type", style="yellow")
         schema_table.add_column("Data Type", style="green")
         
         for col in table.schema:
             schema_table.add_row(
-                col.column_name,
+                col.original_column_name,
+                col.transformed_column_name or "",
                 col.origin_type,
-                col.data_type or ""
+                col.data_type or "",
             )
         console.print(schema_table)
     else:
@@ -161,8 +164,9 @@ def pretty_print_etl_context(context: Any) -> None:
     
     basic_table.add_row("Source Dataset IDs", ", ".join(context.source_dataset_ids) if context.source_dataset_ids else "None")
     basic_table.add_row("Periodicity", context.periodicity or "None")
+    basic_table.add_row("Fabric", context.fabric or "None")
     basic_table.add_row("Expected Delivery", context.expected_delivery or "None")
-    basic_table.add_row("Delivered Version", context.delivered_version or "None")
+    basic_table.add_row("Product Delivery Version", context.product_delivery_version or "None")
     console.print(basic_table)
     console.print()
     

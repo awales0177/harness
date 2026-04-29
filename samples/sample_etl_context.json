@@ -1,0 +1,29 @@
+{
+  "data_product_id": "dp-orders-v1-acct",
+  "source_data_ids": [
+    "src-raw-orders",
+    "src-ref-currency"
+  ],
+  "destination_dataset_id": "dst-curated-warehouse",
+  "three_letter": "ORD",
+  "periodicity": "Feed",
+  "fabric": "L",
+  "expected_delivery_frequency": "Daily",
+  "product_delivery_version": "v2",
+  "etl_platform": "kubeflow",
+  "product_agreement_id": "agr-10042",
+  "data_model_id": "dm-orders-star",
+  "product_etl_comments": "Bronze→silver refresh for orders domain.",
+  "start_time": "2026-04-28T08:00:00",
+  "end_time": "2026-04-28T08:17:33",
+  "tables": [
+    {
+      "table_name": "orders_silver",
+      "data_product_id": "dp-orders-v1-acct"
+    },
+    {
+      "table_name": "order_line_items_silver",
+      "data_product_id": "dp-orders-v1-acct"
+    }
+  ]
+}

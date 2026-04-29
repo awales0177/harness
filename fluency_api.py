@@ -32,11 +32,56 @@ if TYPE_CHECKING:
 VALID_STATUSES = frozenset({"passed", "failed", "warning"})
 VALID_ORIGIN_TYPES = frozenset({"source", "iso", "language", "regex", "metadata", "cleaned", "date"})
 VALID_STAGES = frozenset({"bronze", "silver", "gold"})
+VALID_TABLE_TYPES = frozenset({"iceberg", "delta"})
+VALID_PERIODICITY = frozenset({"Feed", "One-Time"})
+VALID_FABRIC = frozenset({"L"})
+VALID_ETL_PLATFORMS = frozenset({"kubeflow", "palantir"})
+VALID_PIPELINE_NAMES = frozenset({"MD"})
 DELIVERED_VERSION_PATTERN = re.compile(r"^v\d+$")
 
 OriginType = Literal["source", "iso", "language", "regex", "metadata", "cleaned", "date"]
 Stage = Literal["bronze", "silver", "gold"]
 Status = Literal["passed", "failed", "warning"]
+TableType = Literal["iceberg", "delta"]
+Periodicity = Literal["Feed", "One-Time"]
+Fabric = Literal["L"]
+EtlPlatform = Literal["kubeflow", "palantir"]
+PipelineName = Literal["MD"]
+
+
+def _ensure_valid_table_type(value: str, *, field_name: str = "table_type") -> None:
+    if value not in VALID_TABLE_TYPES:
+        raise ValueError(
+            f"{field_name} must be one of {sorted(VALID_TABLE_TYPES)!r}, got {value!r}"
+        )
+
+
+def _ensure_valid_periodicity(value: str, *, field_name: str = "periodicity") -> None:
+    if value not in VALID_PERIODICITY:
+        raise ValueError(
+            f"{field_name} must be one of {sorted(VALID_PERIODICITY)!r}, got {value!r}"
+        )
+
+
+def _ensure_valid_fabric(value: str, *, field_name: str = "fabric") -> None:
+    if value not in VALID_FABRIC:
+        raise ValueError(
+            f"{field_name} must be one of {sorted(VALID_FABRIC)!r}, got {value!r}"
+        )
+
+
+def _ensure_valid_etl_platform(value: str, *, field_name: str = "etl_platform") -> None:
+    if value not in VALID_ETL_PLATFORMS:
+        raise ValueError(
+            f"{field_name} must be one of {sorted(VALID_ETL_PLATFORMS)!r}, got {value!r}"
+        )
+
+
+def _ensure_valid_pipeline_name(value: str, *, field_name: str = "pipeline_name") -> None:
+    if value not in VALID_PIPELINE_NAMES:
+        raise ValueError(
+            f"{field_name} must be one of {sorted(VALID_PIPELINE_NAMES)!r}, got {value!r}"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -70,9 +115,9 @@ class DataQuality:
 @dataclass
 class Schema:
     """Describes a single column in a table."""
-
-    column_name: str
+    original_column_name: str
     origin_type: OriginType
+    transformed_column_name: Optional[str] = None
     function_created_by: Optional[str] = None
     data_type: Optional[str] = None
 
@@ -82,6 +127,11 @@ class Schema:
                 f"origin_type must be one of {VALID_ORIGIN_TYPES!r}, "
                 f"got {self.origin_type!r}"
             )
+
+
+def _schema_column_key(s: Schema) -> str:
+    """Logical name in the current dataset: transformed name if set, else original."""
+    return s.transformed_column_name or s.original_column_name
 
 
 @dataclass
@@ -129,7 +179,12 @@ def extract_source_info(df: "DataFrame") -> SourceInfo:
     from pyspark.sql import functions as F
 
     schema = [
-        Schema(column_name=f.name, origin_type="source", data_type=str(f.dataType))
+        Schema(
+            original_column_name=f.name,
+            transformed_column_name=None,
+            origin_type="source",
+            data_type=str(f.dataType),
+        )
         for f in df.schema.fields
     ]
     num_of_columns = len(df.columns)
@@ -179,12 +234,18 @@ def update_schema_origin(
 
     Mutates *schema* in-place.
     """
-    index = {s.column_name: s for s in schema}
+    index = {_schema_column_key(s): s for s in schema}
     for name in column_names:
         if name in index:
             index[name].origin_type = origin_type
         else:
-            schema.append(Schema(column_name=name, origin_type=origin_type))
+            schema.append(
+                Schema(
+                    original_column_name=name,
+                    transformed_column_name=None,
+                    origin_type=origin_type,
+                )
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -259,9 +320,10 @@ class WriteOperations:
     def __init__(self, table: TableContext) -> None:
         self._table = table
 
-    def table(self, data, format: str = "iceberg"):
+    def table(self, data, format: TableType = "iceberg"):
         from write.write_table import write_table
 
+        _ensure_valid_table_type(format, field_name="format")
         engines = [{"engine": "pyspark", "version": "2.0.0"}]
         with self._table.function_tracker("write_table", function_engines=engines):
             self._table.table_type = format
@@ -278,24 +340,22 @@ class TableContext:
 
     # --- product / output fields ---
     table_name: str
-    table_type: Optional[str] = None
-    s3_path: Optional[str] = None
     stage: Optional[Stage] = None
+    table_type: Optional[TableType] = None
+    source_s3_path: Optional[str] = None
+    table_s3_path: Optional[str] = None
     data_quality: Optional[DataQuality] = None
-    num_of_columns: Optional[int] = None
-    num_of_rows: Optional[int] = None
-    schema: List[Schema] = field(default_factory=list)
+    source_num_of_columns: Optional[int] = None
+    source_num_of_rows: Optional[int] = None
+    product_num_of_columns: Optional[int] = None
+    product_num_of_rows: Optional[int] = None
+    columns: List[Schema] = field(default_factory=list)
     data_validation_results: List[DataValidationResult] = field(default_factory=list)
-    data_domains: List[str] = field(default_factory=list)
+    data_tags: List[str] = field(default_factory=list)
     sample_data: List[Dict[str, Any]] = field(default_factory=list)
     functions_ran: List[FunctionExecution] = field(default_factory=list)
     etl_comments: Optional[str] = None
-
-    # --- source / input fields ---
-    source_s3_path: Optional[str] = None
-    source_data_quality: Optional[DataQuality] = None
-    source_num_of_columns: Optional[int] = None
-    source_num_of_rows: Optional[int] = None
+    pipeline_name: Optional[PipelineName] = None
 
     # Accepted at construction time, extracted, then discarded — never stored.
     source_df: InitVar[Optional["DataFrame"]] = None
@@ -305,6 +365,10 @@ class TableContext:
             raise ValueError("table_name cannot be empty")
         if self.stage is not None and self.stage not in VALID_STAGES:
             raise ValueError(f"stage must be one of {VALID_STAGES!r}, got {self.stage!r}")
+        if self.table_type is not None:
+            _ensure_valid_table_type(self.table_type)
+        if self.pipeline_name is not None:
+            _ensure_valid_pipeline_name(self.pipeline_name)
 
         # Operation namespaces — plain attributes so dataclass machinery ignores them.
         self.read = ReadOperations(self)
@@ -356,7 +420,8 @@ class TableContext:
         """Return a deep copy of this table's schema list."""
         return [
             Schema(
-                column_name=s.column_name,
+                original_column_name=s.original_column_name,
+                transformed_column_name=s.transformed_column_name,
                 origin_type=s.origin_type,
                 function_created_by=s.function_created_by,
                 data_type=s.data_type,
@@ -365,7 +430,7 @@ class TableContext:
         ]
 
     def _columns_by_origin(self, origin_type: OriginType) -> List[str]:
-        return [s.column_name for s in self.schema if s.origin_type == origin_type]
+        return [_schema_column_key(s) for s in self.schema if s.origin_type == origin_type]
 
     # ------------------------------------------------------------------
     # DataFrame display
@@ -456,27 +521,35 @@ class TableContext:
 class ETLContext:
     """Top-level container for a single ETL pipeline run."""
 
-    pipeline_id: Optional[str] = None
-    source_dataset_ids: List[str] = field(default_factory=list)
-    periodicity: Optional[str] = None
-    expected_delivery: Optional[str] = None
-    delivered_version: Optional[str] = None
-    etl_platform: Optional[str] = None
-    github_link: Optional[str] = None
-    data_agreement_id: Optional[str] = None
+    data_product_id: Optional[str] = None
+    source_data_ids: List[str] = field(default_factory=list)
+    destination_dataset_id: Optional[str] = None
+    three_letter: Optional[str] = None
+    periodicity: Optional[Periodicity] = None
+    fabric: Optional[Fabric] = None
+    expected_delivery_frequency: Optional[str] = None
+    product_delivery_version: Optional[str] = None
+    etl_platform: Optional[EtlPlatform] = None
+    product_agreement_id: Optional[str] = None
     data_model_id: Optional[str] = None
-    etl_comments: Optional[str] = None
+    product_etl_comments: Optional[str] = None
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
     tables: List[TableContext] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        if self.delivered_version is not None:
-            if not DELIVERED_VERSION_PATTERN.match(self.delivered_version):
+        if self.product_delivery_version is not None:
+            if not DELIVERED_VERSION_PATTERN.match(self.product_delivery_version):
                 raise ValueError(
-                    "delivered_version must match 'v<number>' (e.g. 'v1', 'v12'), "
-                    f"got {self.delivered_version!r}"
+                    "product_delivery_version must match 'v<number>' (e.g. 'v1', 'v12'), "
+                    f"got {self.product_delivery_version!r}"
                 )
+        if self.periodicity is not None:
+            _ensure_valid_periodicity(self.periodicity)
+        if self.fabric is not None:
+            _ensure_valid_fabric(self.fabric)
+        if self.etl_platform is not None:
+            _ensure_valid_etl_platform(self.etl_platform)
         if self.start_time is None:
             self.start_time = datetime.now()
         pretty_print_etl_context_init(self)
@@ -500,13 +573,14 @@ class ETLContext:
         return next((t for t in self.tables if t.table_name == table_name), None)
 
     def get_table_by_s3_path(self, s3_path: str) -> Optional[TableContext]:
-        return next((t for t in self.tables if t.s3_path == s3_path), None)
+        return next((t for t in self.tables if t.table_s3_path == s3_path), None)
 
     def get_tables_by_type(self, table_type: str) -> List[TableContext]:
         return [t for t in self.tables if t.table_type == table_type]
 
-    def update_table_type(self, table_name: str, table_type: str) -> bool:
+    def update_table_type(self, table_name: str, table_type: TableType) -> bool:
         """Set *table_type* on the named table. Returns True if found."""
+        _ensure_valid_table_type(table_type)
         table = self.get_table_by_name(table_name)
         if table:
             table.table_type = table_type
@@ -535,8 +609,21 @@ class ETLContext:
     # ------------------------------------------------------------------
 
     def to_dict(self) -> Dict[str, Any]:
-        """Return a JSON-safe dictionary representation."""
-        return _serialize(self)
+        """Return a JSON-safe dictionary representation.
+
+        Full :class:`TableContext` payloads are not embedded under ``tables``;
+        each entry is a lightweight ref (``table_name``, ``data_product_id``)
+        so table documents can live in separate storage.
+        """
+        data = _serialize(self)
+        data["tables"] = [
+            {
+                "table_name": t.table_name,
+                "data_product_id": self.data_product_id,
+            }
+            for t in self.tables
+        ]
+        return data
 
     def to_json(self, indent: Optional[int] = None) -> str:
         """Return a JSON string representation.
